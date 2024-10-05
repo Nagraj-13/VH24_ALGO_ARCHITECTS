@@ -3,6 +3,7 @@ import { Need } from "../models/need.model.js";
 import { Supplier } from "../models/supplier.model.js";
 import { Institute } from "../models/institute.model.js";
 import { calculateDistance } from "../utils/minDistance.js";
+import mongoose from "mongoose";
 
 export const fetchRequests = asyncHandler(async (req, res) => {
   const { id } = req.user;
@@ -17,16 +18,22 @@ export const fetchRequests = asyncHandler(async (req, res) => {
     const distance = calculateDistance(longitude, latitude, supLat, supLon);
     return { institute, distance };
   });
+  
 
-  console.log(nearByInstitutes);
-
-  const instituteNeeds = await Need.find({ instituteId: institute.id })
-    .select("items.name items.quantity items.isFullfilled")
-    .lean();
-
+  console.log("nearby ",nearByInstitutes);
+  const requests = await Promise.all(
+    nearByInstitutes.map(async (institute) => {
+      const id = institute.institute._id.toString(); // Convert ObjectId to string
+      console.log("inst ", id);
+      const needs = await Need.find({ instituteId: id }); // Query Need by instituteId
+      console.log("Needs for institute:", needs);
+      return needs;
+    })
+  );
+  
   return res
     .status(200)
-    .json({ message: "needs fetched successfully", instituteNeeds });
+    .json({ message: "needs fetched successfully", requests });
 });
 
 export const addBid = asyncHandler(async (req, res) => {
