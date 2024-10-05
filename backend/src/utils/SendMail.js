@@ -10,8 +10,8 @@ export const sendEmailToSuppliers = async (suppliersEmails, items) => {
             host: "smtp.mailtrap.io",
             port: 2525,
             auth: {
-                user: "5a2c9efb333ba2",
-                pass: "88b790bb8d2c8f"
+                user: process.env.MAILTRAP_USER,
+                pass: process.env.MAILTRAP_PASS
             }
         });
 
