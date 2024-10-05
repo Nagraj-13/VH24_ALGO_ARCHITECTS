@@ -161,7 +161,7 @@ export default function SupplierDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-100 to-blue-100 p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">{profileData.name} Dashboard</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-8">Supplier Dashboard</h1>
         <div className="bg-white rounded-xl shadow-2xl p-8 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-green-100 rounded-lg p-6 flex items-center">
@@ -208,32 +208,15 @@ export default function SupplierDashboard() {
               onClick={() => setActiveTab('Requests')}
             >
               <Box className="h-5 w-5 mr-2" />
-              Inventory
+              Requests
             </button>
-            <button
-              className={`flex items-center px-4 py-2 rounded-full mb-2 ${
-                activeTab === 'tracking' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-              onClick={() => setActiveTab('tracking')}
-            >
-              <Truck className="h-5 w-5 mr-2" />
-              Tracking
-            </button>
-            <button
-              className={`flex items-center px-4 py-2 rounded-full mb-2 ${
-                activeTab === 'history' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-              onClick={() => setActiveTab('history')}
-            >
-              <Clock className="h-5 w-5 mr-2" />
-              History
-            </button>
+            
           </div>
+          <div className=' flex gap-5'>
           {
-            req.map((request) => (
-              <div className="p-6">
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">Request</h3>
-              <p className="text-gray-600 mb-2">Institute ID: {request.instituteId}</p>
+            req.map((request,index) => (
+              <div  className=" bg-[#DBEAFE] rounded-lg shadow-lg overflow-hidden p-6 ">
+              <h3 className="text-xl font-semibold mb-2 text-gray-800 ">Request {index+1}</h3>
               <p className="text-gray-600 mb-2">Request Status: {request.isFullfilled ? 'Fullfilled' : 'Not Fullfilled'}</p>
               {request.items.length > 0 && (
                 <>
@@ -248,25 +231,14 @@ export default function SupplierDashboard() {
                   </ul>
                 </>
               )}
+              <button
+              className={`flex  items-center px-4 py-2  rounded-lg mb-2  bg-blue-500 text-white`}
+            >
+              Bid
+            </button>
             </div>
             ))
           }
-          <TabContent data={activeTab === 'tracking' ? trackingData : tabData[activeTab]} />
-        </div>
-        <div className="mt-8 bg-white rounded-xl shadow-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Upcoming Deliveries</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className="bg-gray-100 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg font-semibold">Delivery #{index + 1}</span>
-                  <Calendar className="h-5 w-5 text-blue-500" />
-                </div>
-                <p className="text-gray-600">Date: {new Date(Date.now() + (index + 1) * 86400000).toLocaleDateString()}</p>
-                <p className="text-gray-600">Items: Various supplies</p>
-                <p className="text-gray-600">Destination: Local Charity</p>
-              </div>
-            ))}
           </div>
         </div>
       </div>

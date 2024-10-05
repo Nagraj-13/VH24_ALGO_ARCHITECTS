@@ -1,8 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { Need } from "../models/need.model.js";
 import { Supplier } from "../models/supplier.model.js";
-<<<<<<< Updated upstream
-=======
 import { Institute } from "../models/institute.model.js";
 import { calculateDistance } from "../utils/minDistance.js";
 import mongoose from "mongoose";
@@ -37,7 +35,6 @@ export const fetchRequests = asyncHandler(async (req, res) => {
     .status(200)
     .json({ message: "needs fetched successfully", requests });
 });
->>>>>>> Stashed changes
 
 export const addBid = asyncHandler(async (req, res) => {
   const { id } = req.user;
