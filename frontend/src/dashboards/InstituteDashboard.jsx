@@ -10,7 +10,7 @@ export default function InstituteDashboard() {
     name: "Global Care Foundation",
     totalDonations: 150000,
     totalDonors: 1250,
-    impactScore: 92,
+    impactScore: 91,
   }
 
   const tabData = {
