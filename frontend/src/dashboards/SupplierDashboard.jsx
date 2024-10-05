@@ -1,11 +1,33 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect} from 'react'
 import { motion } from 'framer-motion'
 import { Package, Truck, Clock, BarChart2, Calendar, Box, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
-
+import axios from 'axios'
 export default function SupplierDashboard() {
-  const [activeTab, setActiveTab] = useState('inventory')
+
+  const [req, setReq] = useState([]);
+
+
+  useEffect(()=>{
+   const getRequests = async ()=>{
+      const token = localStorage.getItem('token');
+      console.log(token)
+      axios.get('http://localhost:5000/api/v1/supplier/fetch-request',{
+        headers:{
+        'Authorization':`Bearer ${token}`,
+        'Content-Type': 'application/json', 
+      }})
+      .then((res)=>{
+        console.log(res)
+        setReq(res.data.requests[0])
+      })
+      .catch(err=>console.log(err))
+    }
+    getRequests();
+    console.log("Request",req)
+  } ,[])
+  const [activeTab, setActiveTab] = useState('Requests')
   const [availability, setAvailability] = useState(true)
   const [trackingData, setTrackingData] = useState([
     { id: 1, name: 'Emergency Supplies', quantity: 1000, status: 'Accepted', destination: 'Red Cross HQ' },
@@ -21,7 +43,7 @@ export default function SupplierDashboard() {
   }
 
   const tabData = {
-    inventory: [
+    Requests: [
       { id: 1, name: 'Canned Food', quantity: 5000, unit: 'cans', status: 'In Stock' },
       { id: 2, name: 'Blankets', quantity: 1000, unit: 'pieces', status: 'Low Stock' },
       { id: 3, name: 'First Aid Kits', quantity: 500, unit: 'kits', status: 'In Stock' },
@@ -78,7 +100,7 @@ export default function SupplierDashboard() {
         >
           <div className="p-6">
             <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.name}</h3>
-            {activeTab === 'inventory' && (
+            {activeTab === 'Requests' && (
               <>
                 <p className="text-gray-600 mb-2">Quantity: {item.quantity} {item.unit}</p>
                 <div className="flex items-center justify-between">
@@ -181,9 +203,9 @@ export default function SupplierDashboard() {
           <div className="flex flex-wrap space-x-4 mb-6">
             <button
               className={`flex items-center px-4 py-2 rounded-full mb-2 ${
-                activeTab === 'inventory' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+                activeTab === 'Requests' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
               }`}
-              onClick={() => setActiveTab('inventory')}
+              onClick={() => setActiveTab('Requests')}
             >
               <Box className="h-5 w-5 mr-2" />
               Inventory
@@ -207,6 +229,28 @@ export default function SupplierDashboard() {
               History
             </button>
           </div>
+          {
+            req.map((request) => (
+              <div className="p-6">
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">Request</h3>
+              <p className="text-gray-600 mb-2">Institute ID: {request.instituteId}</p>
+              <p className="text-gray-600 mb-2">Request Status: {request.isFullfilled ? 'Fullfilled' : 'Not Fullfilled'}</p>
+              {request.items.length > 0 && (
+                <>
+                  <h4 className="text-lg font-semibold mb-2 text-gray-700">Items:</h4>
+                  <ul>
+                    {request.items.map((item) => (
+                      <li key={item._id} className="flex justify-between mb-2">
+                        <span>{item.name} - Quantity: {item.quantity}</span>
+                        <span>{getStatusIcon(item.isFullfilled)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+            ))
+          }
           <TabContent data={activeTab === 'tracking' ? trackingData : tabData[activeTab]} />
         </div>
         <div className="mt-8 bg-white rounded-xl shadow-2xl p-8">
