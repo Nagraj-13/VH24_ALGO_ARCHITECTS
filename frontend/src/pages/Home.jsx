@@ -7,6 +7,8 @@ import { useNavigate, Link } from 'react-router-dom'
 
 
 export default function Home() {
+  const imgpath = "https://img.freepik.com/free-vector/charity-flat-concept-with-smiling-volunteers-holding-donation-boxes-big-heart-vector-illustration_1284-79449.jpg?t=st=1728096563~exp=1728100163~hmac=16c4993b0427167bfb61402809bf7a825ce46aee51b7daae106f3c5810fe2536&w=1380"
+
   const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
@@ -19,10 +21,37 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <section className="text-center mb-16">
+        {/* <section className="text-center mb-16 mt-4">
           <h1 className="text-5xl font-bold mb-4">Connecting Generosity with Need</h1>
-          <p className="text-2xl text-gray-600 mb-8">Join our platform to make a difference in the world</p>
+          <p className="text-2xl text-gray-600 mb-8">Join our community of givers and make a lasting impact on causes you care about.<br /> Together, we can create a better world.</p>
           <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white"><Link to="/signup">Get Started</Link></Button>
+        </section> */}
+
+<section className="flex flex-col md:flex-row items-center justify-around  md:py-6 ml-4 mb-8 px-6">
+          <div className="md:w-1/2 md:pr-8 mb-8 md:mb-0">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+            Connecting Generosity with Need
+              {/* <span className="text-teal-600"> Our Planet's Future</span> */}
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+            Join our community of givers and make a lasting impact on causes you care about. Together, we can create a better world.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/signup')}>
+                Get started
+              </Button>
+            
+              
+            </div>
+          </div>
+          <div className="md:w-[50%]">
+            <img
+              src={imgpath}
+              alt="Illustration of people planting trees and caring for the environment"
+              className="rounded-lg shadow-2xl w-[100%]"
+            />
+          </div>
         </section>
 
         <section className="grid md:grid-cols-3 gap-8 mb-16">
@@ -85,55 +114,10 @@ export default function Home() {
           </div>
         </div>
         <div className="text-center mt-6">
-            {/* <p className="text-xl font-semibold mb-4">Ready to make a difference?</p> */}
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white"><Link to="/signup">Join DonorNet Today</Link></Button>
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/signup')}>Join DonorNet Today</Button>
         </div>
       </section>
-        {/* <section className="bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold mb-6 text-center">Why Choose DonorNet?</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
-                Transparent and Secure
-              </h3>
-              <p className="text-gray-600">
-                Our platform ensures every donation is tracked and used responsibly. We provide real-time updates and detailed reports, so you always know the impact of your generosity.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
-                Diverse Causes
-              </h3>
-              <p className="text-gray-600">
-                From education and healthcare to environmental conservation, we connect you with a wide range of verified causes that align with your values and passions.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
-                Efficient Resource Allocation
-              </h3>
-              <p className="text-gray-600">
-                Our unique supplier network ensures that donations are used efficiently, maximizing the impact of every contribution and reducing waste in the donation process.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
-                Community-Driven
-              </h3>
-              <p className="text-gray-600">
-                Join a vibrant community of donors, institutes, and suppliers all working together to create positive change. Share stories, collaborate on projects, and amplify your impact.
-              </p>
-            </div>
-          </div>
-          <div className="text-center mt-8">
-            <p className="text-xl font-semibold mb-4">Ready to make a difference?</p>
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white"><Link to="/signup">Join DonorNet Today</Link></Button>
-          </div>
-        </section> */}
+        
       </main>
 
       <footer className="bg-gray-100 p-4 text-center text-gray-600 ">

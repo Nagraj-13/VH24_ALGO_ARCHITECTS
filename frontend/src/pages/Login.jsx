@@ -37,6 +37,9 @@ export default function Login() {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Welcome Back to DonorNet
+        <div className="flex mb-2 justify-center font-semibold">
+          <Label className='flex text-2xl justify-center'>Login</Label>                    
+        </div>
         </h1>
         <div className='flex justify-evenly '>
                       <Label>
@@ -67,9 +70,6 @@ export default function Login() {
                           Supplier
                       </Label>
                   </div>
-        <div className="flex mb-2 justify-center font-semibold">
-          <Label className='flex text-2xl justify-center'>Login</Label>                    
-        </div>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">

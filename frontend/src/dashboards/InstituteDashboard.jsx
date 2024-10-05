@@ -1,10 +1,36 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { IndianRupee, Users, TrendingUp, PlusCircle, Package, Clock, BarChart2, Send } from 'lucide-react'
+import { IndianRupee, Users, TrendingUp, PlusCircle, Package, Clock, BarChart2, Send, Trash } from 'lucide-react'
+import { useForm, useFieldArray } from 'react-hook-form';
+import axios from 'axios';
 
 export default function InstituteDashboard() {
   const [activeTab, setActiveTab] = useState('requests')
   const [newRequest, setNewRequest] = useState({ title: '', amount: '', description: '' })
+
+  const { register, control, handleSubmit, reset } = useForm({
+    defaultValues: {
+      items: [{ name: '', quantity: '' }] // Initialize with one empty field
+    }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'items' // 'items' refers to the dynamic array of inputs
+  });
+
+  const onSubmit = (data) => {
+    console.log('Submitted data:', data);
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/api/v1/institute/raise-request",data,{
+      headers:{
+        'Authorization':`Bearer ${token}`,
+        'Content-Type': 'application/json', 
+      }
+    })
+    reset(); // Optionally reset the form after submission
+  };
+
 
   const profileData = {
     name: "Global Care Foundation",
@@ -142,45 +168,57 @@ export default function InstituteDashboard() {
           {activeTab === 'requests' && (
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-4">Create New Request</h3>
-              <form onSubmit={handleNewRequestSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-                  <input
-                    type="text"
-                    id="title"
-                    value={newRequest.title}
-                    onChange={(e) => setNewRequest({...newRequest, title: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount ($)</label>
-                  <input
-                    type="number"
-                    id="amount"
-                    value={newRequest.amount}
-                    onChange={(e) => setNewRequest({...newRequest, amount: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea
-                    id="description"
-                    value={newRequest.description}
-                    onChange={(e) => setNewRequest({...newRequest, description: e.target.value})}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    rows="3"
-                    required
-                  ></textarea>
-                </div>
-                <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  <PlusCircle className="h-5 w-5 mr-2" />
-                  Create Request
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-white p-8 rounded-lg shadow-lg">
+          {fields.map((item, index) => (
+            <div key={item.id} className="grid grid-cols-12 gap-4 mb-4">
+              <div className="col-span-5">
+                <label className="block text-sm font-medium text-gray-700">Item Name</label>
+                <input
+                  {...register(`items.${index}.name`, { required: true })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  placeholder="Item Name"
+                />
+              </div>
+              <div className="col-span-5">
+                <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                <input
+                  type="number"
+                  {...register(`items.${index}.quantity`, { required: true })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  placeholder="Quantity"
+                />
+              </div>
+              <div className="col-span-2 flex items-end">
+                <button
+                  type="button"
+                  onClick={() => remove(index)} // Remove the item from the list
+                  className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+                >
+                  <Trash className="h-5 w-5" />
                 </button>
-              </form>
+              </div>
+            </div>
+          ))}
+
+          <div className="flex justify-between items-center">
+            <button
+              type="button"
+              onClick={() => append({ name: '', quantity: '' })} // Append a new empty item
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              <PlusCircle className="h-5 w-5 mr-2" />
+              Add Item
+            </button>
+
+            <button
+              type="submit"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+
             </div>
           )}
           <TabContent data={tabData[activeTab]} />

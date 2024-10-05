@@ -1,30 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
 import { Mail, Lock, User, Phone } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 const DonorSignup = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const [error, setError] = useState('');
 
-    console.log(data); // Handle form data submission to the backend here
-    // Make API call to submit data (e.g., fetch or axios)
-    axios.post("http://localhost:5000/api/v1/auth/donorSignUp",data)
-    .then(res=>{
-        console.log(res.data)
-        localStorage.setItem("token",JSON.stringify(res.data.token));
-        navigate('/donorDashboard')
-    })
-    .catch(error=>console.log(error));
+  const getCoordinatesByPincode = async (pincode) => {
+    const apiUrl = `https://nominatim.openstreetmap.org/search?postalcode=${pincode}&format=json&limit=1`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      if (data.length === 0) {
+        throw new Error('Invalid pincode or no data found.');
+      }
+
+      const { lat, lon } = data[0];
+      setError('');
+      return { lat, lon }; // Return coordinates to use in the form submission
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      setError('Could not fetch coordinates. Please check the pincode.');
+      return null; // Return null if there was an error
+    }
+  };
+
+  const onSubmit = async (data) => {
+    const coordinates = await getCoordinatesByPincode(data.location.pincode);
+
+    if (coordinates) {
+      const fullData = {
+        ...data,
+        location: {
+          ...data.location,
+          latitude: coordinates.lat,
+          longitude: coordinates.lon,
+        },
+      };
+
+      console.log(fullData)
+
+      // Submit the full data to the backend
+      axios
+        .post('http://localhost:5000/api/v1/auth/donorSignUp', fullData)
+        .then((res) => {
+          console.log(res.data);
+          localStorage.setItem('token', JSON.stringify(res.data.token));
+          navigate('/donorDashboard');
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   return (
@@ -169,6 +207,8 @@ const DonorSignup = () => {
               )}
             </div>
           </div>
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
           <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
             Sign Up

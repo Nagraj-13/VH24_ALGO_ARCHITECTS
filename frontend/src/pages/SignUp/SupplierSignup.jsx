@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import axios from 'axios';
 
 import { useForm } from 'react-hook-form';
@@ -15,10 +15,46 @@ const SupplierSignup = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data); // Handle form data submission to the backend here
+  const [error, setError] = useState('');
+  const getCoordinatesByPincode = async (pincode) => {
+    const apiUrl = `https://nominatim.openstreetmap.org/search?postalcode=${pincode}&format=json&limit=1`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      if (data.length === 0) {
+        throw new Error('Invalid pincode or no data found.');
+      }
+
+      const { lat, lon } = data[0];
+      setError('');
+      return { lat, lon }; // Return coordinates to use in the form submission
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      setError('Could not fetch coordinates. Please check the pincode.');
+      return null; // Return null if there was an error
+    }
+  };
+
+  const onSubmit = async (data) => {
+
+    const coordinates = await getCoordinatesByPincode(data.location.pincode);
+
+    if (coordinates) {
+      const fullData = {
+        ...data,
+        location: {
+          ...data.location,
+          latitude: coordinates.lat,
+          longitude: coordinates.lon,
+        },
+      };
+
+      console.log(fullData)
+
     // Make API call to submit data (e.g., fetch or axios)
-    axios.post("http://localhost:5000/api/v1/auth/supplierSignUp",data)
+    axios.post("http://localhost:5000/api/v1/auth/supplierSignUp",fullData)
     .then(res=>{
         console.log(res.data)
         localStorage.setItem("token",JSON.stringify(res.data.token));
@@ -26,6 +62,7 @@ const SupplierSignup = () => {
     })
     .catch(error=>console.log(error));
   };
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
