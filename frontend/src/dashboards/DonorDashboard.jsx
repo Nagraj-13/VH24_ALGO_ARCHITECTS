@@ -7,7 +7,7 @@ export default function DonorDashboard() {
 
   const tabData = {
     requested: [
-      { id: 1, title: 'Clean Water Project', amount: 5000, organization: 'WaterAid' },
+      { id: 1, title: '10kg Rice', amount: 5000, organization: 'WaterAid' },
       { id: 2, title: 'Education for All', amount: 2500, organization: 'UNICEF' },
       { id: 3, title: 'Hunger Relief Program', amount: 3000, organization: 'World Food Programme' },
     ],
