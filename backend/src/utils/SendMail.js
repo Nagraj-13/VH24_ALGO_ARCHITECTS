@@ -4,21 +4,22 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const sendEmailToSuppliers = async (suppliersEmails, items) => {
-  try {
-    var transporter = nodemailer.createTransport({
-      host: "smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: "5a2c9efb333ba2",
-        pass: "88b790bb8d2c8f",
-      },
-    });
+    try {
 
-    const message = {
-      from: "donornetofficial@gmail.com",
-      to: suppliersEmails.join(", "),
-      subject: "New Request for Supplies",
-      text: `Hello,
+        var transporter = nodemailer.createTransport({
+            host: "smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+                user: process.env.MAILTRAP_USER,
+                pass: process.env.MAILTRAP_PASS
+            }
+        });
+
+        const message = {
+            from: 'donornetofficial@gmail.com',
+            to: suppliersEmails.join(", "),
+            subject: "New Request for Supplies",
+            text: `Hello,
   
             We are in need of the following items:
             ${items.map((item) => `${item.name} (Quantity: ${item.quantity ? item.quantity : "Not specified"})`).join("\n")}
